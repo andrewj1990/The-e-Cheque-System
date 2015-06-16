@@ -28,7 +28,7 @@ import java.security.*;
 public class SendChequeJFrame extends javax.swing.JFrame {
     
     private String chequePath;
-    private String recieverIP;
+    private String receiverIP;
     private String cipherChequePath;
     private boolean selectChequeFlag;
     private EChequeRegisteration eChequeRegisterdUser; 

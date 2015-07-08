@@ -135,7 +135,7 @@ public class EChequeRegisterationTest {
         System.out.println("getBankAddress");
         EChequeRegisteration instance = new EChequeRegisteration();
         String expResult = "TestBankAddress";
-        instance.setBankName(expResult);
+        instance.setBankAddress(expResult);
         String result = instance.getBankAddress();
         assertEquals(expResult, result);
     }

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ECheque.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;The_e-Cheque_Client&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">eCheque</a> &gt; <span class="el_source">ECheque.java</span></div><h1>ECheque.java</h1><pre class="source lang-java linenums">/*
+ * cheque.java
+ *
+ * Created on March 27, 2007, 10:33 PM
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author Basel
+ */
+package eCheque;
+
+import java.io.Serializable;
+
+//this class  for inter data cheque form user
+public class ECheque implements Serializable
+{
+     private String accountholder;
+     private String accountNumber;
+     private String bankname;
+     private String payToOrderOf ;
+     private String amountofMony;
+     private String currencytype;
+     private String chequeNumber;
+     private boolean guaranteed;
+     private String earnday;
+     private byte[] banksignature;
+     private byte[] drawersiganure;
+     
+     
+     
+     
+     
+     //to ener data we use set function 
+    /** Creates a new instance of ECheque */
+<span class="nc" id="L39">    public ECheque() {</span>
+        
+<span class="nc" id="L41">    }</span>
+    
+    public void setaccountholder(String x)
+    {
+<span class="nc" id="L45">        accountholder = x;</span>
+     
+<span class="nc" id="L47">    }</span>
+    public void setaccountNumber(String y)
+    {
+<span class="nc" id="L50">        accountNumber=y;</span>
+<span class="nc" id="L51">    }</span>
+    
+    
+    public void setbankname(String z)
+    {
+<span class="nc" id="L56">        bankname=z;</span>
+        
+<span class="nc" id="L58">    }</span>
+  
+    public void setpayToOrderOf(String m)
+    {
+<span class="nc" id="L62">        payToOrderOf=m;</span>
+        
+<span class="nc" id="L64">    }</span>
+    
+    public void setamountofMony(String s){
+<span class="nc" id="L67">        amountofMony = s;</span>
+<span class="nc" id="L68">    }</span>
+    
+    public void setcurrencytype(String n)
+    {
+<span class="nc" id="L72">        currencytype=n;</span>
+        
+<span class="nc" id="L74">    }</span>
+    public void setchequeNumber(String c)
+    {
+<span class="nc" id="L77">        chequeNumber=c;</span>
+<span class="nc" id="L78">    }</span>
+    public void setguaranteed(boolean s)
+    {
+<span class="nc" id="L81">        guaranteed=s;</span>
+        
+<span class="nc" id="L83">    }</span>
+    public void setearnday(String u)
+    {
+<span class="nc" id="L86">        earnday= u;</span>
+     
+<span class="nc" id="L88">    }</span>
+
+    
+    public void setbanksignature(byte[] y)
+    {
+<span class="nc" id="L93">        banksignature = y;</span>
+     
+<span class="nc" id="L95">    } </span>
+   
+   public void setdrawersiganure(byte[] y)
+    {
+<span class="nc" id="L99">        drawersiganure = y;</span>
+     
+<span class="nc" id="L101">    } </span>
+      
+     
+     
+     
+    //to extracting data we use get function;
+    public String getMoney()
+    {
+<span class="nc" id="L109">        return amountofMony;</span>
+    }
+    public String getaccountholder()
+    {
+<span class="nc" id="L113">        return accountholder;</span>
+    }
+    public String getaccountNumber()
+    {
+<span class="nc" id="L117">       return accountNumber;</span>
+    }
+    public String getbankname()
+    {
+<span class="nc" id="L121">         return bankname ;  </span>
+    }
+        
+    public String getpayToOrderOf()
+    {
+<span class="nc" id="L126">       return  payToOrderOf;   </span>
+    }
+    
+    public String getcurrencytype()
+    {
+<span class="nc" id="L131">        return currencytype;   </span>
+    }
+    
+    public String getchequeNumber()
+    {
+<span class="nc" id="L136">        return chequeNumber;</span>
+    }
+    
+  
+    public boolean getguaranteed()
+    {
+        
+<span class="nc" id="L143">        return guaranteed ;</span>
+    }
+    public String getearnday()
+    {
+<span class="nc" id="L147">        return  earnday;</span>
+    }
+    
+     public byte[]  getbanksignature()
+    {
+<span class="nc" id="L152">        return  banksignature;</span>
+    }
+    
+    public byte[]  getdrawersiganure()
+    {
+<span class="nc" id="L157">        return  drawersiganure;</span>
+    }
+   
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EchequeClient.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;The_e-Cheque_Client&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">eCheque</a> &gt; <span class="el_source">EchequeClient.java</span></div><h1>EchequeClient.java</h1><pre class="source lang-java linenums">/*
+ * EchequeClient.java
+ *
+ * Created on April 27, 2007, 8:38 PM
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author SAAD
+ */
+
+package eCheque;
+
+import java.net.*;
+import java.io.* ;   
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import org.omg.CORBA.TRANSIENT;
+
+
+public class EchequeClient implements Runnable{
+    
+    /** Creates a new instance of EchequeClient */
+
+private Socket ClientConnection;
+private ObjectInputStream SocketInputObject;
+private ObjectOutputStream SocketOutputObject;
+private InputStream SocketInput;
+private OutputStream SocketOutput;
+private DigitalCertificate clientCerit;
+private EChequeRegisteration registrationData;
+private ECheque depositCheque;
+private JTextArea screenShell;
+private Key sessionKey;
+private String chequePath;
+private String walletPath;
+private String hostname;
+private int portID;
+private int bankmode;
+private boolean getServerConnection;
+private boolean getSocketConnection;
+private boolean getProcessConnection;
+private boolean bankConnection;
+
+
+<span class="nc" id="L53">public EchequeClient(JTextArea screen , DigitalCertificate DC,Key aesKey,String wPath, String cPath, String host, int port){</span>
+
+<span class="nc" id="L55">    screenShell = screen;</span>
+<span class="nc" id="L56">    clientCerit = DC;</span>
+<span class="nc" id="L57">    sessionKey = aesKey;</span>
+<span class="nc" id="L58">    walletPath = wPath;</span>
+<span class="nc" id="L59">    chequePath = cPath;</span>
+<span class="nc" id="L60">    hostname = host;</span>
+<span class="nc" id="L61">    portID = port;</span>
+<span class="nc" id="L62">    getServerConnection = false;</span>
+<span class="nc" id="L63">    getSocketConnection = false;</span>
+<span class="nc" id="L64">    getProcessConnection= false;</span>
+<span class="nc" id="L65">    bankConnection = false;</span>
+<span class="nc" id="L66">}</span>
+
+<span class="nc" id="L68">public EchequeClient(int port, int mode, String host, EChequeRegisteration register, DigitalCertificate DC){</span>
+        
+<span class="nc" id="L70">     portID = port;</span>
+<span class="nc" id="L71">     bankmode = mode;</span>
+<span class="nc" id="L72">     hostname = host;</span>
+<span class="nc" id="L73">     registrationData = register;</span>
+<span class="nc" id="L74">     clientCerit = DC;</span>
+<span class="nc" id="L75">     bankConnection = true;</span>
+   
+<span class="nc" id="L77">}</span>
+
+<span class="nc" id="L79">public EchequeClient(int port, int mode, String host,EChequeRegisteration register, ECheque chq){</span>
+<span class="nc" id="L80">    portID = port;</span>
+<span class="nc" id="L81">    bankmode = mode;</span>
+<span class="nc" id="L82">    hostname= host;</span>
+<span class="nc" id="L83">    registrationData = register;</span>
+<span class="nc" id="L84">    depositCheque = chq;</span>
+<span class="nc" id="L85">    bankConnection = true;</span>
+<span class="nc" id="L86">}     </span>
+
+private void ConnectToServer( ) throws Exception {
+    
+<span class="nc" id="L90">      ClientConnection = new Socket(InetAddress.getByName(hostname),portID);</span>
+<span class="nc" id="L91">      getServerConnection = true;</span>
+<span class="nc" id="L92">}</span>
+
+private void getSocketStream()throws Exception {
+    
+<span class="nc" id="L96">     SocketInput=ClientConnection.getInputStream() ;</span>
+<span class="nc" id="L97">     SocketOutput=ClientConnection.getOutputStream();</span>
+<span class="nc" id="L98">     SocketOutput.flush();</span>
+<span class="nc" id="L99">     SocketInputObject=new ObjectInputStream(ClientConnection.getInputStream());</span>
+<span class="nc" id="L100">     SocketOutputObject=new ObjectOutputStream(ClientConnection.getOutputStream());</span>
+<span class="nc" id="L101">     SocketOutputObject.flush();</span>
+     
+<span class="nc" id="L103">     getServerConnection = true;</span>
+<span class="nc" id="L104"> }</span>
+
+private void processConnection()throws IOException,Exception,ClassNotFoundException,
+    NoSuchAlgorithmException,NoSuchPaddingException {
+     
+    DigitalCertificate serverCerit;
+<span class="nc" id="L110">    boolean sessionDone = false;</span>
+        
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if(!sessionDone){</span>
+             //exchange the Digital Ceritificates
+<span class="nc" id="L114">             SocketOutputObject.writeObject(clientCerit);</span>
+<span class="nc" id="L115">             SocketOutputObject.flush();</span>
+             
+<span class="nc" id="L117">             serverCerit = (DigitalCertificate)SocketInputObject.readObject();</span>
+             
+             //send session key
+<span class="nc" id="L120">             Cipher cipher = Cipher.getInstance(&quot;RSA&quot;);</span>
+<span class="nc" id="L121">             cipher.init(Cipher.WRAP_MODE, serverCerit.getpublicKey());</span>
+<span class="nc" id="L122">             byte[] wrappedKey = cipher.wrap(sessionKey);</span>
+<span class="nc" id="L123">             int keyLength = wrappedKey.length;</span>
+             
+<span class="nc" id="L125">             SocketOutputObject.writeInt(keyLength);</span>
+<span class="nc" id="L126">             SocketOutputObject.flush();</span>
+             
+<span class="nc" id="L128">             SocketOutput.write(wrappedKey);</span>
+<span class="nc" id="L129">             SocketOutput.flush();</span>
+             
+             //send encrypted cheque.
+<span class="nc" id="L132">             FileInputStream cheqOut = new FileInputStream(chequePath);</span>
+<span class="nc" id="L133">             byte[] buffer = new byte[1024];</span>
+             int numread;
+<span class="nc bnc" id="L135" title="All 2 branches missed.">             while((numread=cheqOut.read(buffer))&gt;=0)</span>
+             {
+<span class="nc" id="L137">                 SocketOutput.write(buffer, 0, numread);</span>
+             }
+<span class="nc" id="L139">             cheqOut.close(); </span>
+      }
+      
+<span class="nc" id="L142">    getProcessConnection= true;</span>
+        
+<span class="nc" id="L144">}</span>
+
+private void CloseConnection(){
+    try
+    {
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        if(getSocketConnection){</span>
+<span class="nc" id="L150">            SocketInput.close();</span>
+<span class="nc" id="L151">            SocketOutput.close();</span>
+<span class="nc" id="L152">            SocketInputObject.close();</span>
+<span class="nc" id="L153">            SocketOutputObject.close();</span>
+        }
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        if(getServerConnection){</span>
+<span class="nc" id="L156">            ClientConnection.close();</span>
+        }
+    }
+<span class="nc" id="L159">    catch(Exception e)</span>
+    {
+<span class="nc" id="L161">        JOptionPane.showMessageDialog(null,&quot;illegeal close for communication channel&quot;,&quot;Connection Error&quot;,JOptionPane.ERROR_MESSAGE);</span>
+<span class="nc" id="L162">    }</span>
+<span class="nc" id="L163">}</span>
+private void processBankConection()throws IOException, ClassNotFoundException{
+            
+           String confirm;
+<span class="nc" id="L167">           SocketOutputObject.writeObject(&quot;Hello&quot;);</span>
+<span class="nc" id="L168">           SocketOutputObject.flush();</span>
+<span class="nc" id="L169">           SocketOutputObject.writeInt(bankmode);</span>
+<span class="nc" id="L170">           SocketOutputObject.flush();</span>
+           
+<span class="nc bnc" id="L172" title="All 2 branches missed.">           if(bankmode ==0 ){</span>
+<span class="nc" id="L173">               SocketOutputObject.writeObject(registrationData);</span>
+<span class="nc" id="L174">               SocketOutputObject.flush();</span>
+<span class="nc" id="L175">               SocketOutputObject.writeObject(clientCerit);</span>
+<span class="nc" id="L176">               SocketOutputObject.flush();</span>
+               // save registration data.
+<span class="nc" id="L178">               ObjectOutputStream outObj = new ObjectOutputStream(new FileOutputStream(&quot;Config.epc&quot;));</span>
+<span class="nc" id="L179">               outObj.writeObject(registrationData);</span>
+<span class="nc" id="L180">               outObj.close();</span>
+                                                            
+           }
+<span class="nc bnc" id="L183" title="All 2 branches missed.">           if(bankmode==1){</span>
+<span class="nc" id="L184">               SocketOutputObject.writeObject(depositCheque);</span>
+<span class="nc" id="L185">               SocketOutputObject.flush();</span>
+<span class="nc" id="L186">               SocketOutputObject.writeObject(registrationData.getAccountNumber());</span>
+<span class="nc" id="L187">               SocketOutputObject.flush();</span>
+<span class="nc" id="L188">               JOptionPane.showMessageDialog(null,&quot;send info for deposit done&quot;);</span>
+               
+           }
+<span class="nc bnc" id="L191" title="All 2 branches missed.">           if(bankmode == 2){</span>
+<span class="nc" id="L192">               SocketOutputObject.writeObject(depositCheque);</span>
+<span class="nc" id="L193">               SocketOutputObject.flush();</span>
+           }
+<span class="nc" id="L195">           confirm = (String)SocketInputObject.readObject();</span>
+<span class="nc" id="L196">           JOptionPane.showMessageDialog(null,confirm);</span>
+    
+<span class="nc" id="L198">}</span>
+
+public void RunClient() 
+ {
+     
+    try {
+           
+<span class="nc bnc" id="L205" title="All 2 branches missed.">           if(!bankConnection)</span>
+<span class="nc" id="L206">                screenShell.append(&quot;\n\n&gt;&gt; Connecting to echeque host&quot;);</span>
+<span class="nc" id="L207">           ConnectToServer ();</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">           if(!bankConnection)</span>
+<span class="nc" id="L209">                screenShell.append(&quot;\n\n&gt;&gt; you are connected&quot;);</span>
+<span class="nc" id="L210">           getSocketStream ();</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">           if(!bankConnection)</span>
+<span class="nc" id="L212">                screenShell.append(&quot;\n\n&gt;&gt; you are connected&quot;);</span>
+           
+<span class="nc bnc" id="L214" title="All 2 branches missed.">           if(!bankConnection){</span>
+<span class="nc" id="L215">               screenShell.append(&quot;\n\n&gt;&gt; Starting cheque tarnsfer&quot;);</span>
+<span class="nc" id="L216">               processConnection ();</span>
+           }
+           else
+<span class="nc" id="L219">              processBankConection();</span>
+     }
+    
+<span class="nc" id="L222">     catch(Exception error)</span>
+     {
+<span class="nc" id="L224">         JOptionPane.showMessageDialog(null,error.getMessage(),&quot;Connection Error&quot;,JOptionPane.ERROR_MESSAGE);</span>
+         
+     }
+     
+     finally
+         {
+<span class="nc" id="L230">             CloseConnection();</span>
+<span class="nc" id="L231">         }</span>
+<span class="nc" id="L232">  }</span>
+
+ public void run(){
+<span class="nc" id="L235">    RunClient();</span>
+<span class="nc" id="L236"> }</span>
+    
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

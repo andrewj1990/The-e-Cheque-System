@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Echqueserver.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;The_e-Cheque_Client&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">eCheque</a> &gt; <span class="el_source">Echqueserver.java</span></div><h1>Echqueserver.java</h1><pre class="source lang-java linenums">/*
+ * Echqueserver.java
+ *
+ * Created on April 27, 2007, 8:17 PM
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author Basel
+ */ 
+package eCheque;
+
+//import com.sun.crypto.provider.AESCipher;
+import java.net.*;
+import java.io.* ;       
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import javax.crypto.Cipher;
+import java.security.*;
+
+public class Echqueserver implements Runnable{
+    
+/** Creates a new instance of Echqueserver */
+private ServerSocket server;
+private Socket ServerConnection;
+private ObjectInputStream socketInputObject;
+private ObjectOutputStream socketOutputObject;
+private InputStream socketInput;
+private OutputStream socketOutput;
+private JTextArea screenShell;
+private EChequeRegisteration eChequeRegist;
+private DigitalCertificate serverCerit;
+private String walletPath;
+private int portID;
+private PrivateKey privKey;
+
+<span class="nc" id="L44"> public Echqueserver(JTextArea screen,DigitalCertificate DC, String wPath,PrivateKey privateKey, ServerSocket serverSockect){</span>
+
+<span class="nc" id="L46">    screenShell = screen;</span>
+<span class="nc" id="L47">    serverCerit = DC;</span>
+<span class="nc" id="L48">    walletPath = wPath;</span>
+<span class="nc" id="L49">    privKey = privateKey;</span>
+<span class="nc" id="L50">    server = serverSockect;</span>
+<span class="nc" id="L51">}</span>
+
+ //private void startServer() throws Exception{
+    
+   // server = new ServerSocket(portID);
+//}
+
+ private void acceptConnection()throws IOException{
+<span class="nc" id="L59">     ServerConnection = server.accept();</span>
+<span class="nc" id="L60">} </span>
+
+ private void getsocketStream()throws Exception {
+<span class="nc" id="L63">    socketOutput=ServerConnection.getOutputStream();</span>
+<span class="nc" id="L64">    socketOutput.flush(); </span>
+<span class="nc" id="L65">    socketInput=ServerConnection.getInputStream() ;</span>
+
+<span class="nc" id="L67">    socketOutputObject=new ObjectOutputStream(ServerConnection.getOutputStream());</span>
+<span class="nc" id="L68">    socketOutputObject.flush();</span>
+<span class="nc" id="L69">    socketInputObject = new ObjectInputStream(ServerConnection.getInputStream());</span>
+<span class="nc" id="L70">   }</span>
+
+ private void ProcessConnection()throws IOException,ClassNotFoundException,NoSuchAlgorithmException,NoSuchPaddingException, IllegalBlockSizeException,InvalidKeyException,Exception {
+       
+<span class="nc" id="L74">        boolean sessionDone = false;</span>
+        DigitalCertificate clientCerit;
+        
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if(!sessionDone){</span>
+            
+            //exchange digital certificates
+<span class="nc" id="L80">            clientCerit = (DigitalCertificate)socketInputObject.readObject();</span>
+<span class="nc" id="L81">            socketOutputObject.writeObject(serverCerit);</span>
+<span class="nc" id="L82">            socketOutputObject.flush();</span>
+            
+            //get the wraeped key and uwraped it
+            byte[] wrappedKey;
+            byte[] unwrappedKey;
+            Key sessionKey;
+            int keyLength; 
+            
+            //read the session key form the socket
+<span class="nc" id="L91">            keyLength = socketInputObject.readInt();</span>
+<span class="nc" id="L92">            wrappedKey = new byte[keyLength];</span>
+<span class="nc" id="L93">            socketInput.read(wrappedKey);</span>
+            
+            //decrypt the session key with the user private key.
+<span class="nc" id="L96">            Cipher cipher = Cipher.getInstance(&quot;RSA&quot;);</span>
+<span class="nc" id="L97">            cipher.init(Cipher.UNWRAP_MODE,privKey);</span>
+<span class="nc" id="L98">            sessionKey = cipher.unwrap(wrappedKey,&quot;AES&quot;,Cipher.SECRET_KEY);</span>
+            
+            //
+<span class="nc" id="L101">            Calendar currTime = new GregorianCalendar();</span>
+<span class="nc" id="L102">            String cheqName =&quot;&quot;;</span>
+<span class="nc" id="L103">            cheqName += currTime.get(currTime.YEAR);</span>
+<span class="nc" id="L104">            cheqName += currTime.get(currTime.MONTH);</span>
+<span class="nc" id="L105">            cheqName += currTime.get(currTime.DAY_OF_MONTH);</span>
+<span class="nc" id="L106">            cheqName += currTime.get(currTime.HOUR_OF_DAY);</span>
+<span class="nc" id="L107">            cheqName += currTime.get(currTime.MILLISECOND);</span>
+                                 
+            //read the cheque from the socket
+<span class="nc" id="L110">            FileOutputStream chqIn = new FileOutputStream(walletPath+&quot;\\In Coming\\&quot;+cheqName+&quot;.cry&quot;);</span>
+<span class="nc" id="L111">            byte[] buffer = new byte[1024];</span>
+            int numread;
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            while ((numread = socketInput.read(buffer))&gt;=0)</span>
+            {
+<span class="nc" id="L115">               chqIn.write(buffer, 0, numread);</span>
+            }
+            
+<span class="nc" id="L118">            chqIn.close(); </span>
+        
+            //validate the received cheque.
+<span class="nc" id="L121">            InputStream in = new FileInputStream(walletPath+&quot;\\In Coming\\&quot;+cheqName+&quot;.cry&quot;);</span>
+<span class="nc" id="L122">            OutputStream out = new FileOutputStream(walletPath+&quot;\\My Cheques\\&quot;+cheqName+&quot;.sec&quot;);</span>
+            
+            //create AES object to decrypt the received cheque
+<span class="nc" id="L125">            AESCrypt aesObj = new AESCrypt();</span>
+<span class="nc" id="L126">            Cipher aesCipher = aesObj.initializeCipher(sessionKey,1);</span>
+<span class="nc" id="L127">            aesObj.crypt(in,out,aesCipher);</span>
+<span class="nc" id="L128">            in.close();</span>
+<span class="nc" id="L129">            out.close();</span>
+           
+            // verify the cheque siganture using the sender public key.
+<span class="nc" id="L132">            Digitalsigneture digitalSign = new Digitalsigneture();</span>
+            
+            // load decrypted chequeObject.
+<span class="nc" id="L135">            EChequeIO readChq = new EChequeIO();</span>
+<span class="nc" id="L136">            ECheque recivedChq = new ECheque();</span>
+<span class="nc" id="L137">            recivedChq = readChq.readcheque(walletPath+&quot;\\My Cheques\\&quot;+cheqName+&quot;.sec&quot;);</span>
+<span class="nc" id="L138">            String chqSign = ChequeReferenceString(recivedChq);</span>
+            
+<span class="nc" id="L140">            boolean verifySign = digitalSign.verifySignature(recivedChq.getdrawersiganure(),chqSign,clientCerit.getpublicKey());</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            if(verifySign){</span>
+<span class="nc" id="L142">                  JOptionPane.showMessageDialog(null,&quot;The signature is vaild&quot;, &quot;e-Cheque Clear&quot;,</span>
+                  JOptionPane.INFORMATION_MESSAGE);
+            }
+            else{
+<span class="nc" id="L146">                  JOptionPane.showMessageDialog(null,&quot;The signature is not vaild&quot;, &quot;e-Cheque not Clear&quot;,</span>
+                  JOptionPane.WARNING_MESSAGE);
+            }
+                
+           
+        }
+        
+<span class="nc" id="L153">}</span>
+       
+ private void closeConnection() {
+    try
+    {
+    
+<span class="nc" id="L159">        socketInput.close();</span>
+<span class="nc" id="L160">        socketOutput.close();</span>
+<span class="nc" id="L161">        socketInputObject.close();</span>
+<span class="nc" id="L162">        socketOutputObject.close();</span>
+<span class="nc" id="L163">        ServerConnection.close();</span>
+    }
+<span class="nc" id="L165">    catch(Exception e)</span>
+    {
+<span class="nc" id="L167">        JOptionPane.showMessageDialog(null,e.getMessage());</span>
+<span class="nc" id="L168">        e.printStackTrace();</span>
+<span class="nc" id="L169">    }</span>
+     
+<span class="nc" id="L171"> }</span>
+ 
+ public void RunServer() {
+    try {
+          
+<span class="nc" id="L176">           screenShell.append(&quot;\n&gt;&gt;Status: Starting The Sever&quot;);</span>
+           //startServer(); 
+<span class="nc" id="L178">           screenShell.append(&quot;\n&gt;&gt;Status: Wating for connection&quot;);</span>
+<span class="nc" id="L179">           acceptConnection();</span>
+<span class="nc" id="L180">           screenShell.append(&quot;\n&gt;&gt;Status: connection accepted&quot;);</span>
+<span class="nc" id="L181">           getsocketStream ();</span>
+<span class="nc" id="L182">           screenShell.append(&quot;\n&gt;&gt;Status: Socket I/O complete&quot;);</span>
+<span class="nc" id="L183">           screenShell.append(&quot;\n&gt;&gt;Status: processing started&quot;);</span>
+<span class="nc" id="L184">           ProcessConnection ();</span>
+<span class="nc" id="L185">           screenShell.append(&quot;\n&gt;&gt;Status: process complete&quot;);</span>
+        }
+
+<span class="nc" id="L188">    catch(Exception error)</span>
+    {
+<span class="nc" id="L190">        JOptionPane.showMessageDialog(null,error.getMessage());</span>
+<span class="nc" id="L191">        error.printStackTrace();</span>
+    }
+     
+    finally
+    {
+<span class="nc" id="L196">          closeConnection();</span>
+<span class="nc" id="L197">    }</span>
+<span class="nc" id="L198">}</span>
+
+ private String ChequeReferenceString(ECheque chq){
+        
+<span class="nc" id="L202">        String ref=&quot;&quot;;</span>
+<span class="nc" id="L203">        ref+= chq.getaccountNumber()+chq.getaccountholder()+chq.getbankname()+chq.getchequeNumber()+</span>
+<span class="nc" id="L204">              chq.getMoney()+chq.getcurrencytype()+chq.getearnday()+chq.getguaranteed()+chq.getpayToOrderOf();</span>
+       
+<span class="nc" id="L206">        return ref;       </span>
+}  
+    
+ public void run(){
+
+<span class="nc" id="L211">     RunServer();</span>
+<span class="nc" id="L212"> }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

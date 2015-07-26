@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DigitalCertificate.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;The_e-Cheque_Client&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">eCheque</a> &gt; <span class="el_source">DigitalCertificate.java</span></div><h1>DigitalCertificate.java</h1><pre class="source lang-java linenums">/*
+ * certificate.java
+ *
+ * Created on March 28, 2007, 3:26 PM
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author Abu^S3ooD
+ */
+package eCheque;
+
+import java.io.Serializable;
+import java.security.*;
+// this class generates Digital Signature
+
+public class DigitalCertificate implements Serializable
+{
+  private String HolderName;
+  private String Subject ;
+  private String Issuer ;
+  private String SerialNumber;
+  private String ValidFrom;
+  private String ValidTo;
+  private PublicKey publicKey;
+  private byte[] IssuerSignature;
+    
+    /** Creates a new instance of certificate */
+<span class="fc" id="L32">    public DigitalCertificate() {</span>
+<span class="fc" id="L33">    }</span>
+    public void setHolderName(String x)
+    {
+<span class="fc" id="L36">       HolderName= x;</span>
+<span class="fc" id="L37">    }</span>
+    public void setSubject(String x)
+    {
+<span class="fc" id="L40">        Subject= x;</span>
+<span class="fc" id="L41">    }</span>
+    public void setIssuer(String x)
+    {
+<span class="fc" id="L44">        Issuer= x;</span>
+<span class="fc" id="L45">    }</span>
+    public void setSerialNumber(String x)
+    {
+<span class="fc" id="L48">        SerialNumber= x;</span>
+<span class="fc" id="L49">    }</span>
+    public void setValidFrom (String x)
+    {
+<span class="fc" id="L52">        ValidFrom= x;</span>
+<span class="fc" id="L53">    }</span>
+    public void setValidTo (String x)
+    {
+<span class="fc" id="L56">        ValidTo= x;</span>
+<span class="fc" id="L57">    }</span>
+    public void setPublicKey (PublicKey x)
+    {
+<span class="fc" id="L60">        publicKey= x;</span>
+<span class="fc" id="L61">    }</span>
+    public void setIssuerSignature (byte [] x)
+    {
+<span class="fc" id="L64">        IssuerSignature= x;</span>
+<span class="fc" id="L65">    }</span>
+    
+    public String getHolderName()
+    {
+<span class="fc" id="L69">        return HolderName ;</span>
+    }
+     public String getSubject()
+    {
+<span class="fc" id="L73">        return Subject ;</span>
+    }
+      public String getIssuer()
+    {
+<span class="fc" id="L77">        return Issuer;</span>
+    }
+       public String getSerialNumber()
+    {
+<span class="fc" id="L81">        return SerialNumber;</span>
+    }
+        public String getValidFrom()
+    {
+<span class="fc" id="L85">        return ValidFrom;</span>
+    }
+    public String getValidTo()
+    {
+<span class="fc" id="L89">        return ValidTo;</span>
+    }
+    public PublicKey getpublicKey()
+    {
+<span class="fc" id="L93">        return publicKey;</span>
+    }
+    
+         public byte[] getIssuerSignature()
+    {
+<span class="fc" id="L98">        return IssuerSignature;</span>
+    }
+     
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
